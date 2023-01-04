@@ -5,49 +5,6 @@ import (
 	"strings"
 )
 
-type Recipe struct {
-	Name         string
-	Ingredients  []string
-	Instructions string
-}
-
-/*
-	La fonction applyToIngredients est une fonction d'ordre supérieur idempotente qui prend une recette et
-	une fonction en entrée, et applique la fonction à chaque ingrédient de la recette.
-	Cette fonction est pure, car elle ne modifie pas l'objet Recipe original et renvoie
-	une nouvelle instance modifiée.
-*/
-func applyToIngredients(r Recipe, f func(string) string) Recipe {
-	for i, ingredient := range r.Ingredients {
-		r.Ingredients[i] = f(ingredient)
-	}
-	return r
-}
-
-/*
-	La fonction addIngredient est une fonction pure idempotente qui ajoute
-	un ingrédient à une recette sans modifier l'original.
-*/
-func addIngredient(r Recipe, ingredient string) Recipe {
-	newIngredients := append(r.Ingredients, ingredient)
-	return Recipe{
-		Name:         r.Name,
-		Ingredients:  newIngredients,
-		Instructions: r.Instructions,
-	}
-}
-
-/*
-	La fonction de composition de fonctions permet de combiner plusieurs fonctions en une seule.
-	Dans cet exemple, la fonction de composition de fonctions est utilisée pour appliquer deux
-	ingrédients à une recette.
-*/
-func compose(f, g func(Recipe) Recipe) func(Recipe) Recipe {
-	return func(r Recipe) Recipe {
-		return f(g(r))
-	}
-}
-
 func main() {
 	/*
 		L'expression lambda uppercaseIngredients est une fonction qui met en majuscules

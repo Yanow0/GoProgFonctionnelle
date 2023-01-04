@@ -12,10 +12,10 @@ type Recipe struct {
 }
 
 /*
-La fonction applyToIngredients est une fonction d'ordre supérieur idempotente qui prend une recette et
-une fonction en entrée, et applique la fonction à chaque ingrédient de la recette.
-Cette fonction est pure, car elle ne modifie pas l'objet Recipe original et renvoie
-une nouvelle instance modifiée.
+	La fonction applyToIngredients est une fonction d'ordre supérieur idempotente qui prend une recette et
+	une fonction en entrée, et applique la fonction à chaque ingrédient de la recette.
+	Cette fonction est pure, car elle ne modifie pas l'objet Recipe original et renvoie
+	une nouvelle instance modifiée.
 */
 func applyToIngredients(r Recipe, f func(string) string) Recipe {
 	for i, ingredient := range r.Ingredients {
@@ -25,8 +25,8 @@ func applyToIngredients(r Recipe, f func(string) string) Recipe {
 }
 
 /*
-La fonction addIngredient est une fonction pure idempotente qui ajoute
-un ingrédient à une recette sans modifier l'original.
+	La fonction addIngredient est une fonction pure idempotente qui ajoute
+	un ingrédient à une recette sans modifier l'original.
 */
 func addIngredient(r Recipe, ingredient string) Recipe {
 	newIngredients := append(r.Ingredients, ingredient)
@@ -37,7 +37,16 @@ func addIngredient(r Recipe, ingredient string) Recipe {
 	}
 }
 
-//TODO: fonction compose
+/*
+	La fonction de composition de fonctions permet de combiner plusieurs fonctions en une seule.
+	Dans cet exemple, la fonction de composition de fonctions est utilisée pour appliquer deux
+	ingrédients à une recette.
+*/
+func compose(f, g func(Recipe) Recipe) func(Recipe) Recipe {
+	return func(r Recipe) Recipe {
+		return f(g(r))
+	}
+}
 
 func main() {
 	/*
@@ -65,4 +74,15 @@ func main() {
 	modifiedRecipe := addIngredient(r, "vanilla extract")
 	fmt.Println(modifiedRecipe)
 
+	addSalt := func(r Recipe) Recipe {
+		r.Ingredients = append(r.Ingredients, "SALT")
+		return r
+	}
+	addYeast := func(r Recipe) Recipe {
+		r.Ingredients = append(r.Ingredients, "YEAST")
+		return r
+	}
+	addSaltAndYeast := compose(addSalt, addYeast)
+	fmt.Println("\nRecipe with salt and yeast:")
+	fmt.Println(addSaltAndYeast(r))
 }
